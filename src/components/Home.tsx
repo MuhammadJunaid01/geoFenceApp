@@ -14,7 +14,7 @@ import {
 } from 'react-native-permissions';
 import tw from '../../tailwind';
 import {RootStackParamList} from '../interfaces/navigation.interface';
-import {Coordinate, GeoFence} from '../interfaces/shared';
+import {Coordinate} from '../interfaces/shared';
 import {useAppSelector} from '../redux/hooks';
 import ActionBtn from '../shared/ActionBtn';
 import ThemedText from '../shared/ThemedText';

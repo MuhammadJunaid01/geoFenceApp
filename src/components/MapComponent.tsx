@@ -36,7 +36,6 @@ const initialState: IState = {
 const MapComponent: React.FC<IProps> = ({onSaveFence}) => {
   // const dispatch = useAppDispatch();
   const [state, setState] = useState(initialState);
-  const {region} = useAppSelector(state => state.geoFence);
   const navigation = useNavigation();
   /* The `handleMapPress` function is a callback function created using the `useCallback` hook in React.
  It is triggered when a user presses on the map. */
