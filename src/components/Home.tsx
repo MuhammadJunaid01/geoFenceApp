@@ -1,17 +1,23 @@
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View} from 'react-native';
 import MapView, {Polygon} from 'react-native-maps';
 import tw from '../../tailwind';
 import {RootStackParamList} from '../interfaces/navigation.interface';
-import {useAppSelector} from '../redux/hooks';
+import {setRegion} from '../redux/features/geoFenceSlice';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import ActionBtn from '../shared/ActionBtn';
 import ThemedText from '../shared/ThemedText';
+import {requestLocationPermission} from '../utils';
 
 const Home = () => {
-  const {fences} = useAppSelector(state => state.geoFence);
+  const dispatch = useAppDispatch();
+  const {fences, region} = useAppSelector(state => state.geoFence);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  useEffect(() => {
+    requestLocationPermission(region => dispatch(setRegion(region)));
+  }, [dispatch]);
   return (
     <View style={tw` flex-1  p-3`}>
       {fences.length === 0 && (
@@ -25,8 +31,7 @@ const Home = () => {
         <View style={tw` flex-1`}>
           <MapView
             style={tw` flex-1`}
-            onPress={handleMapPress}
-            region={state.region || undefined}
+            region={region || undefined}
             showsMyLocationButton
             initialRegion={{
               latitude: 37.78825,
@@ -41,12 +46,15 @@ const Home = () => {
             zoomControlEnabled
             // showsCompass
           >
-            {state.coordinates.length > 0 && (
-              <Polygon
-                coordinates={state.coordinates}
-                fillColor="rgba(0, 150, 136, 0.5)"
-              />
-            )}
+            {fences.map((fence, i) => {
+              return (
+                <Polygon
+                  key={i}
+                  coordinates={fence.coordinates}
+                  fillColor="rgba(0, 150, 136, 0.5)"
+                />
+              );
+            })}
           </MapView>
         </View>
       )}
