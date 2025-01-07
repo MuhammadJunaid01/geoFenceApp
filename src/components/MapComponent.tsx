@@ -2,12 +2,8 @@ import React, {useCallback, useState} from 'react';
 import {Button, View} from 'react-native';
 import MapView, {MapPressEvent, Polygon} from 'react-native-maps';
 import tw from '../../tailwind';
-import {Coordinate} from '../interfaces/shared';
+import {Coordinate, Fence} from '../interfaces/shared';
 
-type Fence = {
-  id: number;
-  coordinates: Coordinate[];
-};
 interface IProps {
   onSaveFence: (fence: Fence) => void;
 }
