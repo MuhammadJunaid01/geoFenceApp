@@ -25,14 +25,16 @@ const ActionBtn: React.FC<IProps> = ({
 
     // Define color mapping based on the utility (colorVariant)
     const colorStyles = {
-      primary: 'bg-[#C52EE1]', // Purple background
+      primary: 'bg-gray-100', // Purple background
       secondary: 'bg-[#FF5733]', // Red background
       tertiary: 'bg-[#1E90FF]', // Blue background
       danger: 'bg-[#FF0000]', // Red background for danger
       success: 'bg-[#28a745]', // Green background for success
     };
 
-    return [tw`${sizeStyles[variant]} ${colorStyles[colorVariant]}`];
+    return [
+      tw`items-center justify-center rounded  ${sizeStyles[variant]} ${colorStyles[colorVariant]}`,
+    ];
   }, [variant, colorVariant]);
 
   // Map ActionBtn variant to ThemedText variant
@@ -68,7 +70,7 @@ const ActionBtn: React.FC<IProps> = ({
   }, [colorVariant]);
 
   return (
-    <TouchableOpacity style={[...buttonStyles]} {...rest}>
+    <TouchableOpacity style={[...buttonStyles, tw` `]} {...rest}>
       <ThemedText variant={generateVariant} color={generateTextColor}>
         {title}
       </ThemedText>

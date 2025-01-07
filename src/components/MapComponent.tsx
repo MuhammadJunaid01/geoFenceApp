@@ -164,6 +164,7 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
             onPress={centerMap}
           />
           <ActionBtn
+            variant="sm"
             title={state.isDrawing ? 'Stop Drawing' : 'Start Drawing'}
             onPress={() =>
               setState(prev => ({...prev, isDrawing: !state.isDrawing}))
