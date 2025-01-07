@@ -1,6 +1,7 @@
 import React, {useCallback, useState} from 'react';
-import {Text, View} from 'react-native';
-import MapView, {MapPressEvent, Polygon, Region} from 'react-native-maps';
+import {Button, View} from 'react-native';
+import MapView, {MapPressEvent, Polygon} from 'react-native-maps';
+import tw from '../../tailwind';
 import {Coordinate} from '../interfaces/shared';
 
 type Fence = {
@@ -43,8 +44,34 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
   }, [onSaveFence, state.coordinates]);
 
   return (
-    <View>
-      <Text>mapComponent</Text>
+    <View style={tw` flex-1`}>
+      <MapView
+        style={tw` flex-1`}
+        onPress={handleMapPress}
+        initialRegion={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}>
+        {state.coordinates.length > 0 && (
+          <Polygon
+            coordinates={state.coordinates}
+            fillColor="rgba(0, 150, 136, 0.5)"
+          />
+        )}
+      </MapView>
+      <View style={tw` absolute bottom-5    items-center`}>
+        <Button
+          title={state.isDrawing ? 'Stop Drawing' : 'Start Drawing'}
+          onPress={() =>
+            setState(prev => ({...prev, isDrawing: !state.isDrawing}))
+          }
+        />
+        {state.coordinates.length > 0 && (
+          <Button title="Save Fence" onPress={handleSave} />
+        )}
+      </View>
     </View>
   );
 };
