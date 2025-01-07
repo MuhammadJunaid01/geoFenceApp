@@ -13,65 +13,61 @@ const ThemedText: React.FC<IProps> = ({
   variant,
   children,
   color = 'text-black',
+  style,
   ...rest
 }) => {
   console.log('color', color);
   const textStyle = useCallback(() => {
-    let style = {};
+    let styleIn = {};
     switch (variant) {
       case 'h1':
-        style = {
-          fontFamily: 'gilroy',
+        styleIn = {
           fontSize: 24,
           fontWeight: 'bold' as 'bold',
         };
         break;
       case 'h2':
-        style = {
-          fontFamily: 'gilroy',
+        styleIn = {
           fontSize: 19,
           fontWeight: 'bold' as 'bold',
         };
         break;
       case 'h3':
-        style = {
-          fontFamily: 'gilroy',
+        styleIn = {
           fontSize: 17,
           fontWeight: '600' as '600',
         };
         break;
       case 'h4':
-        style = {
-          fontFamily: 'gilroy',
+        styleIn = {
           fontSize: 14,
           lineHeight: 21,
           fontWeight: '500' as '500',
         };
         break;
       case 'h5':
-        style = {
-          fontFamily: 'gilroy',
+        styleIn = {
           fontSize: 13,
           fontWeight: '400' as '400',
         };
         break;
       case 'h6':
-        style = {
-          fontFamily: 'gilroy',
+        styleIn = {
           fontSize: 11,
           fontWeight: '300' as '300',
         };
         break;
       default:
-        style = {};
+        styleIn = {};
         break;
     }
 
     // Apply dynamic text color here
     return {
-      ...style,
+      ...styleIn,
+      ...(typeof style === 'object' ? style : {}),
     };
-  }, [variant]);
+  }, [style, variant]);
 
   const combinedStyle = textStyle();
 

@@ -1,19 +1,16 @@
-import Geolocation from '@react-native-community/geolocation';
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Platform, View} from 'react-native';
-import {GeoError, GeoPosition} from 'react-native-geolocation-service';
+import {Alert, View} from 'react-native';
+import {GeoPosition} from 'react-native-geolocation-service';
 import MapView, {MapPressEvent, Marker, Polygon} from 'react-native-maps';
-import {
-  openSettings,
-  PERMISSIONS,
-  request,
-  RESULTS,
-} from 'react-native-permissions';
+import {useSelector} from 'react-redux';
 import tw from '../../tailwind';
 import {Coordinate, Fence, Region} from '../interfaces/shared';
 import {LocationMarker} from '../lib/icons';
+import {setRegion} from '../redux/features/geoFenceSlice';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import ActionBtn from '../shared/ActionBtn';
+import {requestLocationPermission} from '../utils';
 import {showToast} from '../utils/showToast';
 
 interface IProps {
@@ -32,7 +29,9 @@ const initialState: IState = {
   region: null,
 };
 const MapComponent: React.FC<IProps> = ({onSaveFence}) => {
+  const dispatch = useAppDispatch();
   const [state, setState] = useState(initialState);
+  const {region} = useAppSelector(state => state.geoFence);
   const navigation = useNavigation();
   /* The `handleMapPress` function is a callback function created using the `useCallback` hook in React.
  It is triggered when a user presses on the map. */
@@ -83,60 +82,60 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
     }
   }, [state.location]);
   // Request location permission
-  const requestLocationPermission = async () => {
-    try {
-      const permission =
-        Platform.OS === 'ios'
-          ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
-          : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+  // const requestLocationPermission = async () => {
+  //   try {
+  //     const permission =
+  //       Platform.OS === 'ios'
+  //         ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+  //         : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
 
-      const result = await request(permission);
-      if (result === RESULTS.GRANTED) {
-        Geolocation.getCurrentPosition(
-          position => {
-            setState(prev => ({
-              ...prev,
-              location: position.coords,
-              region: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              },
-            }));
-          },
-          (error: GeoError) => {
-            Alert.alert('Error getting location', error.message);
-          },
-          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-        );
-      } else if (result === RESULTS.DENIED) {
-        Alert.alert(
-          'Permission Required',
-          'Location permission is required. Please enable it in settings.',
-          [{text: 'OK', onPress: () => openSettings()}],
-        );
-      } else {
-        Alert.alert('Permission Denied', 'Location access is not allowed.');
-      }
-    } catch (err) {
-      console.error('Permission error:', err);
-    }
-  };
+  //     const result = await request(permission);
+  //     if (result === RESULTS.GRANTED) {
+  //       Geolocation.getCurrentPosition(
+  //         position => {
+  //           setState(prev => ({
+  //             ...prev,
+  //             location: position.coords,
+  //             region: {
+  //               latitude: position.coords.latitude,
+  //               longitude: position.coords.longitude,
+  //               latitudeDelta: 0.01,
+  //               longitudeDelta: 0.01,
+  //             },
+  //           }));
+  //         },
+  //         (error: GeoError) => {
+  //           Alert.alert('Error getting location', error.message);
+  //         },
+  //         {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //       );
+  //     } else if (result === RESULTS.DENIED) {
+  //       Alert.alert(
+  //         'Permission Required',
+  //         'Location permission is required. Please enable it in settings.',
+  //         [{text: 'OK', onPress: () => openSettings()}],
+  //       );
+  //     } else {
+  //       Alert.alert('Permission Denied', 'Location access is not allowed.');
+  //     }
+  //   } catch (err) {
+  //     console.error('Permission error:', err);
+  //   }
+  // };
   useEffect(() => {
-    requestLocationPermission();
-  }, []);
+    requestLocationPermission(region => dispatch(setRegion(region)));
+  }, [dispatch]);
   // console.log(new Date().)
   return (
     <View style={tw` flex-1`}>
       <MapView
         style={tw` flex-1`}
         onPress={handleMapPress}
-        region={state.region || undefined}
+        region={region || undefined}
         showsMyLocationButton
         initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: region?.latitude || 37.78825,
+          longitude: region?.longitude || -122.4324,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}

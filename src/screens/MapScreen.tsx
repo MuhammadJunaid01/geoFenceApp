@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {View} from 'react-native';
 import tw from '../../tailwind';
-import MapComponent from '../components/MapComponent';
+import {MapComponent} from '../components';
 import {Fence} from '../interfaces/shared';
 import {addGeoFence} from '../redux/features/geoFenceSlice';
 import {useAppDispatch} from '../redux/hooks';
