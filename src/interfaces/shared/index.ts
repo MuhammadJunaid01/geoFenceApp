@@ -3,3 +3,7 @@ export interface GeoFence {
   coordinates: Coordinate[];
 }
 export type Coordinate = {latitude: number; longitude: number};
+export type Fence = {
+  id: number;
+  coordinates: Coordinate[];
+};
