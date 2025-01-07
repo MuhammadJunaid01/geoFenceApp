@@ -1,4 +1,4 @@
-export type HomeStackParamList = {
+export type RootStackParamList = {
   Splash: undefined;
   Home: undefined;
   Map: undefined;

@@ -7,3 +7,9 @@ export type Fence = {
   id: number;
   coordinates: Coordinate[];
 };
+export type Region = {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+};
