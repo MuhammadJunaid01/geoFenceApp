@@ -81,51 +81,11 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
       Alert.alert('Location not available', 'Please allow location access.');
     }
   }, [state.location]);
-  // Request location permission
-  // const requestLocationPermission = async () => {
-  //   try {
-  //     const permission =
-  //       Platform.OS === 'ios'
-  //         ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
-  //         : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
 
-  //     const result = await request(permission);
-  //     if (result === RESULTS.GRANTED) {
-  //       Geolocation.getCurrentPosition(
-  //         position => {
-  //           setState(prev => ({
-  //             ...prev,
-  //             location: position.coords,
-  //             region: {
-  //               latitude: position.coords.latitude,
-  //               longitude: position.coords.longitude,
-  //               latitudeDelta: 0.01,
-  //               longitudeDelta: 0.01,
-  //             },
-  //           }));
-  //         },
-  //         (error: GeoError) => {
-  //           Alert.alert('Error getting location', error.message);
-  //         },
-  //         {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-  //       );
-  //     } else if (result === RESULTS.DENIED) {
-  //       Alert.alert(
-  //         'Permission Required',
-  //         'Location permission is required. Please enable it in settings.',
-  //         [{text: 'OK', onPress: () => openSettings()}],
-  //       );
-  //     } else {
-  //       Alert.alert('Permission Denied', 'Location access is not allowed.');
-  //     }
-  //   } catch (err) {
-  //     console.error('Permission error:', err);
-  //   }
-  // };
   useEffect(() => {
     requestLocationPermission(region => dispatch(setRegion(region)));
   }, [dispatch]);
-  // console.log(new Date().)
+
   return (
     <View style={tw` flex-1`}>
       <MapView
@@ -152,11 +112,11 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
             fillColor="rgba(0, 150, 136, 0.5)"
           />
         )}
-        {state.location && (
+        {region && (
           <Marker
             coordinate={{
-              latitude: state.location.latitude,
-              longitude: state.location.longitude,
+              latitude: region.latitude,
+              longitude: region.longitude,
             }}>
             <LocationMarker />
             {/* You can replace 'red' with any color or a custom icon */}
