@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Alert, View} from 'react-native';
 import {GeoPosition} from 'react-native-geolocation-service';
 import MapView, {MapPressEvent, Marker, Polygon} from 'react-native-maps';
-import {useSelector} from 'react-redux';
 import tw from '../../tailwind';
 import {Coordinate, Fence, Region} from '../interfaces/shared';
 import {LocationMarker} from '../lib/icons';
