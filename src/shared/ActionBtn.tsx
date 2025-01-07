@@ -4,24 +4,36 @@ import tw from '../../tailwind';
 import ThemedText from './ThemedText';
 
 interface IProps extends TouchableOpacityProps {
-  label?: string;
+  title?: string;
   variant?: 'lg' | 'md' | 'sm';
+  colorVariant?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'success'; // Added color variant prop
 }
 
 const ActionBtn: React.FC<IProps> = ({
-  label = 'Create',
+  title = 'Create',
   variant = 'lg',
+  colorVariant = 'primary', // Default to 'primary' color
   ...rest
 }) => {
   // Memoize computed styles for better performance
   const buttonStyles = useMemo(() => {
-    const styles = {
+    const sizeStyles = {
       lg: 'h-[60px] px-8',
       md: 'h-[50px] px-6',
       sm: 'h-[40px] px-4',
     };
-    return [tw`${styles[variant]}`];
-  }, [variant]);
+
+    // Define color mapping based on the utility (colorVariant)
+    const colorStyles = {
+      primary: 'bg-[#C52EE1]', // Purple background
+      secondary: 'bg-[#FF5733]', // Red background
+      tertiary: 'bg-[#1E90FF]', // Blue background
+      danger: 'bg-[#FF0000]', // Red background for danger
+      success: 'bg-[#28a745]', // Green background for success
+    };
+
+    return [tw`${sizeStyles[variant]} ${colorStyles[colorVariant]}`];
+  }, [variant, colorVariant]);
 
   // Map ActionBtn variant to ThemedText variant
   const generateVariant = useMemo(() => {
@@ -37,9 +49,29 @@ const ActionBtn: React.FC<IProps> = ({
     }
   }, [variant]);
 
+  // Map ActionBtn variant to Tailwind text color for text
+  const generateTextColor = useMemo(() => {
+    switch (colorVariant) {
+      case 'primary':
+        return 'text-white'; // White text for primary button (with purple background)
+      case 'secondary':
+        return 'text-white'; // White text for secondary button (with red background)
+      case 'tertiary':
+        return 'text-white'; // White text for tertiary button (with blue background)
+      case 'danger':
+        return 'text-white'; // White text for danger button (with red background)
+      case 'success':
+        return 'text-white'; // White text for success button (with green background)
+      default:
+        return 'text-white'; // Default to white text
+    }
+  }, [colorVariant]);
+
   return (
     <TouchableOpacity style={[...buttonStyles]} {...rest}>
-      <ThemedText variant={generateVariant}>{label}</ThemedText>
+      <ThemedText variant={generateVariant} color={generateTextColor}>
+        {title}
+      </ThemedText>
     </TouchableOpacity>
   );
 };

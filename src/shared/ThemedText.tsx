@@ -5,52 +5,72 @@ type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 interface IProps extends TextProps {
   variant: Variant;
+  color?: string; // Color prop to change text color
 }
 
-const ThemedText: React.FC<IProps> = ({variant, children, ...rest}) => {
+const ThemedText: React.FC<IProps> = ({
+  variant,
+  children,
+  color = 'text-black', // Default color is text-black
+  ...rest
+}) => {
   const textStyle = useCallback(() => {
+    let style = {};
     switch (variant) {
       case 'h1':
-        return {
+        style = {
           fontFamily: 'gilroy',
           fontSize: 24,
-          fontWeight: 'bold' as 'bold', // Explicitly define fontWeight
+          fontWeight: 'bold' as 'bold',
         };
+        break;
       case 'h2':
-        return {
+        style = {
           fontFamily: 'gilroy',
           fontSize: 19,
-          fontWeight: 'bold' as 'bold', // Explicitly define fontWeight
+          fontWeight: 'bold' as 'bold',
         };
+        break;
       case 'h3':
-        return {
+        style = {
           fontFamily: 'gilroy',
           fontSize: 17,
-          fontWeight: '600' as '600', // Explicitly define fontWeight
+          fontWeight: '600' as '600',
         };
+        break;
       case 'h4':
-        return {
+        style = {
           fontFamily: 'gilroy',
           fontSize: 14,
           lineHeight: 21,
-          fontWeight: '500' as '500', // Explicitly define fontWeight
+          fontWeight: '500' as '500',
         };
+        break;
       case 'h5':
-        return {
+        style = {
           fontFamily: 'gilroy',
           fontSize: 13,
-          fontWeight: '400' as '400', // Explicitly define fontWeight
+          fontWeight: '400' as '400',
         };
+        break;
       case 'h6':
-        return {
+        style = {
           fontFamily: 'gilroy',
           fontSize: 11,
-          fontWeight: '300' as '300', // Explicitly define fontWeight
+          fontWeight: '300' as '300',
         };
+        break;
       default:
-        return {};
+        style = {};
+        break;
     }
-  }, [variant]);
+
+    // Apply dynamic text color here
+    return {
+      ...style,
+      color, // Apply the color to the style
+    };
+  }, [variant, color]);
 
   const combinedStyle = textStyle();
 

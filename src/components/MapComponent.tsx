@@ -11,6 +11,7 @@ import {
 } from 'react-native-permissions';
 import tw from '../../tailwind';
 import {Coordinate, Fence} from '../interfaces/shared';
+import ActionBtn from '../shared/ActionBtn';
 import {showToast} from '../utils/showToast';
 
 interface IProps {
@@ -155,13 +156,25 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
       <View style={tw`  items-center justify-center`}>
         <View
           style={tw` absolute bottom-5   flex-row  gap-x-3 justify-center  items-center`}>
-          <Button title="Center Location" onPress={centerMap} />
-          <Button
+          {/* <Button title="Center Location" onPress={centerMap} /> */}
+          <ActionBtn
+            variant="sm"
+            title="Center Location"
+            style={tw` bg-gray-400 `}
+            onPress={centerMap}
+          />
+          <ActionBtn
             title={state.isDrawing ? 'Stop Drawing' : 'Start Drawing'}
             onPress={() =>
               setState(prev => ({...prev, isDrawing: !state.isDrawing}))
             }
           />
+          {/* <Button
+            title={state.isDrawing ? 'Stop Drawing' : 'Start Drawing'}
+            onPress={() =>
+              setState(prev => ({...prev, isDrawing: !state.isDrawing}))
+            }
+          /> */}
           {state.coordinates.length > 0 && (
             <Button title="Save Fence" onPress={handleSave} />
           )}
