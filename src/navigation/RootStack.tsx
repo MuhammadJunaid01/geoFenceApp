@@ -10,7 +10,7 @@ const Stack = createStackNavigator<HomeStackParamList>();
 const RootStack: React.FC = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
         {/* <Stack.Screen
           name="Splash"
           component={SplashScreen}
