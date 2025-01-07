@@ -3,9 +3,16 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Alert, Button, Platform, View} from 'react-native';
 import {GeoError, GeoPosition} from 'react-native-geolocation-service';
 import MapView, {MapPressEvent, Polygon} from 'react-native-maps';
-import {PERMISSIONS, request, RESULTS} from 'react-native-permissions';
+import {
+  openSettings,
+  PERMISSIONS,
+  request,
+  RESULTS,
+} from 'react-native-permissions';
 import tw from '../../tailwind';
 import {Coordinate, Fence} from '../interfaces/shared';
+import ActionBtn from '../shared/ActionBtn';
+import {showToast} from '../utils/showToast';
 
 interface IProps {
   onSaveFence: (fence: Fence) => void;
@@ -14,11 +21,18 @@ interface IState {
   coordinates: Coordinate[];
   isDrawing: boolean;
   location: GeoPosition['coords'] | null;
+  region: {
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  } | null;
 }
 const initialState: IState = {
   coordinates: [],
   isDrawing: false,
   location: null,
+  region: null,
 };
 const MapComponent: React.FC<IProps> = ({onSaveFence}) => {
   const [state, setState] = useState(initialState);
@@ -34,7 +48,11 @@ const MapComponent: React.FC<IProps> = ({onSaveFence}) => {
           coordinates: [...prev.coordinates, coordinate],
         }));
       } else {
-        console.warn('Coordinate is null or event is invalid');
+        showToast({
+          type: 'error',
+          message: 'Coordinate is null or event is invalid',
+        });
+        // console.warn('Coordinate is null or event is invalid');
       }
     },
     [state.isDrawing],
@@ -47,7 +65,7 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
     onSaveFence({id: Date.now(), coordinates});
     setState(prev => ({...prev, coordinates: [], isDrawing: false}));
   }, [onSaveFence, state.coordinates]);
-  // Center map on the current location
+  // Center the map on the current location
   const centerMap = useCallback(() => {
     if (state.location) {
       setState(prev => ({
@@ -75,35 +93,59 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
       if (result === RESULTS.GRANTED) {
         Geolocation.getCurrentPosition(
           position => {
-            setState(prev => ({...prev, location: position.coords}));
+            setState(prev => ({
+              ...prev,
+              location: position.coords,
+              region: {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              },
+            }));
           },
           (error: GeoError) => {
             Alert.alert('Error getting location', error.message);
           },
           {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
         );
+      } else if (result === RESULTS.DENIED) {
+        Alert.alert(
+          'Permission Required',
+          'Location permission is required. Please enable it in settings.',
+          [{text: 'OK', onPress: () => openSettings()}],
+        );
       } else {
-        Alert.alert('Permission denied', 'Location permission is required.');
+        Alert.alert('Permission Denied', 'Location access is not allowed.');
       }
     } catch (err) {
       console.error('Permission error:', err);
     }
   };
-
   useEffect(() => {
     requestLocationPermission();
   }, []);
+  // console.log(new Date().)
   return (
     <View style={tw` flex-1`}>
       <MapView
         style={tw` flex-1`}
         onPress={handleMapPress}
+        region={state.region || undefined}
+        showsMyLocationButton
         initialRegion={{
           latitude: 37.78825,
           longitude: -122.4324,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }}>
+        }}
+        showsBuildings
+        showsCompass
+        showsUserLocation
+        showsTraffic
+        zoomControlEnabled
+        // showsCompass
+      >
         {state.coordinates.length > 0 && (
           <Polygon
             coordinates={state.coordinates}
@@ -111,17 +153,32 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
           />
         )}
       </MapView>
-      <View style={tw` absolute bottom-5    items-center`}>
-        <Button title="Center Location" onPress={centerMap} />
-        <Button
-          title={state.isDrawing ? 'Stop Drawing' : 'Start Drawing'}
-          onPress={() =>
-            setState(prev => ({...prev, isDrawing: !state.isDrawing}))
-          }
-        />
-        {state.coordinates.length > 0 && (
-          <Button title="Save Fence" onPress={handleSave} />
-        )}
+      <View style={tw`  items-center justify-center`}>
+        <View
+          style={tw` absolute bottom-5   flex-row  gap-x-3 justify-center  items-center`}>
+          {/* <Button title="Center Location" onPress={centerMap} /> */}
+          <ActionBtn
+            variant="sm"
+            title="Center Location"
+            style={tw` bg-gray-400 `}
+            onPress={centerMap}
+          />
+          <ActionBtn
+            title={state.isDrawing ? 'Stop Drawing' : 'Start Drawing'}
+            onPress={() =>
+              setState(prev => ({...prev, isDrawing: !state.isDrawing}))
+            }
+          />
+          {/* <Button
+            title={state.isDrawing ? 'Stop Drawing' : 'Start Drawing'}
+            onPress={() =>
+              setState(prev => ({...prev, isDrawing: !state.isDrawing}))
+            }
+          /> */}
+          {state.coordinates.length > 0 && (
+            <Button title="Save Fence" onPress={handleSave} />
+          )}
+        </View>
       </View>
     </View>
   );

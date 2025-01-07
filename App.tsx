@@ -6,24 +6,27 @@
  */
 
 import React from 'react';
-import {SafeAreaView} from 'react-native';
+import {View} from 'react-native';
 
 import 'react-native-gesture-handler';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
 import {Provider} from 'react-redux';
 import {RootStack} from './src/navigation';
 import store from './src/redux/store';
+import {toastConfig} from './src/utils/showToast';
 import tw from './tailwind';
-
 function App(): React.JSX.Element {
   return (
-    <SafeAreaView style={tw` flex-1`}>
+    <View style={tw` flex-1`}>
       <Provider store={store}>
         <GestureHandlerRootView style={tw` flex-1`}>
           <RootStack />
+          {/* Configure Toast message */}
+          <Toast config={toastConfig} />
         </GestureHandlerRootView>
       </Provider>
-    </SafeAreaView>
+    </View>
   );
 }
 
