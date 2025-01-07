@@ -1,19 +1,21 @@
 import React, {memo, useCallback} from 'react';
 import {Text, TextProps} from 'react-native';
+import tw from '../../tailwind';
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 interface IProps extends TextProps {
   variant: Variant;
-  color?: string; // Color prop to change text color
+  color?: string;
 }
 
 const ThemedText: React.FC<IProps> = ({
   variant,
   children,
-  color = 'text-black', // Default color is text-black
+  color = 'text-black',
   ...rest
 }) => {
+  console.log('color', color);
   const textStyle = useCallback(() => {
     let style = {};
     switch (variant) {
@@ -68,14 +70,13 @@ const ThemedText: React.FC<IProps> = ({
     // Apply dynamic text color here
     return {
       ...style,
-      color, // Apply the color to the style
     };
-  }, [variant, color]);
+  }, [variant]);
 
   const combinedStyle = textStyle();
 
   return (
-    <Text style={combinedStyle} {...rest}>
+    <Text style={[combinedStyle, tw`${color}`]} {...rest}>
       {children}
     </Text>
   );

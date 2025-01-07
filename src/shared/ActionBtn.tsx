@@ -25,11 +25,11 @@ const ActionBtn: React.FC<IProps> = ({
 
     // Define color mapping based on the utility (colorVariant)
     const colorStyles = {
-      primary: 'bg-gray-100', // Purple background
-      secondary: 'bg-[#FF5733]', // Red background
-      tertiary: 'bg-[#1E90FF]', // Blue background
-      danger: 'bg-[#FF0000]', // Red background for danger
-      success: 'bg-[#28a745]', // Green background for success
+      primary: 'bg-[#004ABB]',
+      secondary: 'bg-[#BDCFE9]',
+      tertiary: 'bg-[#1E90FF]',
+      danger: 'bg-[#D93030]',
+      success: 'bg-[#15D26A]',
     };
 
     return [
@@ -57,20 +57,20 @@ const ActionBtn: React.FC<IProps> = ({
       case 'primary':
         return 'text-white'; // White text for primary button (with purple background)
       case 'secondary':
-        return 'text-white'; // White text for secondary button (with red background)
+        return 'text-black'; // White text for secondary button (with red background)
       case 'tertiary':
         return 'text-white'; // White text for tertiary button (with blue background)
       case 'danger':
         return 'text-white'; // White text for danger button (with red background)
       case 'success':
-        return 'text-white'; // White text for success button (with green background)
+        return 'text-gray-900'; // White text for success button (with green background)
       default:
         return 'text-white'; // Default to white text
     }
   }, [colorVariant]);
 
   return (
-    <TouchableOpacity style={[...buttonStyles, tw` `]} {...rest}>
+    <TouchableOpacity style={[...buttonStyles, tw`  `]} {...rest}>
       <ThemedText variant={generateVariant} color={generateTextColor}>
         {title}
       </ThemedText>
