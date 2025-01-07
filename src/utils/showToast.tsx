@@ -10,24 +10,26 @@ import Toast from 'react-native-toast-message';
  * @param title - Optional title for the toast.
  * @param position - Position of the toast ('top', 'bottom', or 'center').
  */
-type Param = {
+type ToastParam = {
   type: 'success' | 'error' | 'info';
   message: string;
   title?: string;
   position?: 'top' | 'bottom';
+  visibilityTime?: number;
 };
 const showToast = ({
   type,
   message,
   title,
   position = 'bottom', // Default position
-}: Param) => {
+  visibilityTime = 1500,
+}: ToastParam) => {
   Toast.show({
     type, // Supports 'success', 'error', 'info', or custom types
     text1: title || 'Notification', // Title of the toast
     text2: message, // Message body
     position, // Top, bottom, or center
-    visibilityTime: 3000, // Duration in ms
+    visibilityTime, // Duration in ms
     autoHide: true, // Automatically dismiss after `visibilityTime`
     swipeable: true, // Swipe to dismiss
   });
