@@ -62,7 +62,7 @@ const Home = () => {
           },
           (error: GeoError) => {
             setState(prev => ({...prev, isLoading: false})); // Stop loading on error
-            Alert.alert('Error getting location', error.message);
+            console.log('error', error);
           },
           {enableHighAccuracy: true, timeout: 30000, maximumAge: 10000}, // Increased timeout
         );
@@ -89,7 +89,7 @@ const Home = () => {
   useEffect(() => {
     // Update the rendered fences whenever the fences data changes
     setRenderedFences(fences);
-  }, [fences]);
+  }, [fences, state.location]);
   if (state.isLoading) {
     return (
       <View style={tw` flex-1 items-center justify-center`}>

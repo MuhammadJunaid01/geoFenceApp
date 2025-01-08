@@ -114,7 +114,7 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
           },
           (error: GeoError) => {
             setState(prev => ({...prev, isLoading: false})); // Stop loading on error
-            Alert.alert('Error getting location', error.message);
+            console.log('error', error);
           },
           {enableHighAccuracy: true, timeout: 30000, maximumAge: 10000}, // Increased timeout
         );
