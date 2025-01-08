@@ -153,8 +153,8 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
         style={tw`flex-1`}
         onPress={handleMapPress}
         initialRegion={{
-          latitude: state.region?.latitude || 22.35181453333333,
-          longitude: state.region?.longitude || 91.84479628333332,
+          latitude: state.region?.latitude ?? 0,
+          longitude: state.region?.longitude ?? 0,
           latitudeDelta: state.region?.latitudeDelta || 0.0922,
           longitudeDelta: state.region?.longitudeDelta || 0.0421,
         }}
