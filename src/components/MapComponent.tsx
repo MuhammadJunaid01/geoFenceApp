@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import Geolocation from '@react-native-community/geolocation';
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Platform, View} from 'react-native';
+import {ActivityIndicator, Alert, Platform, View} from 'react-native';
 import {GeoError, GeoPosition} from 'react-native-geolocation-service';
 import MapView, {MapPressEvent, Marker, Polygon} from 'react-native-maps';
 import {
@@ -14,7 +13,6 @@ import {
 import tw from '../../tailwind';
 import {Coordinate, Fence, Region} from '../interfaces/shared';
 import {LocationMarker} from '../lib/icons';
-import {useAppSelector} from '../redux/hooks';
 import ActionBtn from '../shared/ActionBtn';
 import {showToast} from '../utils/showToast';
 
@@ -26,12 +24,14 @@ interface IState {
   isDrawing: boolean;
   location: GeoPosition['coords'] | null;
   region: Region | null;
+  isLoading: boolean;
 }
 const initialState: IState = {
   coordinates: [],
   isDrawing: false,
   location: null,
   region: null,
+  isLoading: false,
 };
 const MapComponent: React.FC<IProps> = ({onSaveFence}) => {
   // const dispatch = useAppDispatch();
@@ -88,17 +88,21 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
   // Request location permission
   const requestLocationPermission = async () => {
     try {
+      setState(prev => ({...prev, isLoading: true})); // Start loading
+
       const permission =
         Platform.OS === 'ios'
           ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
           : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
 
       const result = await request(permission);
+
       if (result === RESULTS.GRANTED) {
         Geolocation.getCurrentPosition(
           position => {
             setState(prev => ({
               ...prev,
+              isLoading: false, // Stop loading after success
               location: position.coords,
               region: {
                 latitude: position.coords.latitude,
@@ -109,50 +113,52 @@ is responsible for saving the fence coordinates when called. Here is a breakdown
             }));
           },
           (error: GeoError) => {
+            setState(prev => ({...prev, isLoading: false})); // Stop loading on error
             Alert.alert('Error getting location', error.message);
           },
-          {enableHighAccuracy: true, timeout: 30000, maximumAge: 10000}, // Increase timeout
+          {enableHighAccuracy: true, timeout: 30000, maximumAge: 10000}, // Increased timeout
         );
       } else if (result === RESULTS.DENIED) {
+        setState(prev => ({...prev, isLoading: false})); // Stop loading if denied
         Alert.alert(
           'Permission Required',
           'Location permission is required. Please enable it in settings.',
           [{text: 'OK', onPress: () => openSettings()}],
         );
       } else {
+        setState(prev => ({...prev, isLoading: false})); // Stop loading for other results
         Alert.alert('Permission Denied', 'Location access is not allowed.');
       }
     } catch (err) {
+      setState(prev => ({...prev, isLoading: false})); // Stop loading on exception
       console.error('Permission error:', err);
     }
   };
+
   useEffect(() => {
     // requestLocationPermission(region => dispatch(setRegion(region)));
     requestLocationPermission();
   }, []);
-  // console.log(new Date().)
-  console.log('hjhhjh', state.location);
+
+  if (state.isLoading) {
+    return (
+      <View style={tw` flex-1 items-center justify-center`}>
+        <ActivityIndicator size={'large'} />
+      </View>
+    );
+  }
   return (
     <View style={tw` flex-1`}>
       <MapView
         style={tw`flex-1`}
         onPress={handleMapPress}
         initialRegion={{
-          latitude: state.region?.latitude || 22.35181453333333,
-          longitude: state.region?.longitude || 91.84479628333332,
+          latitude: state.region?.latitude ?? 0,
+          longitude: state.region?.longitude ?? 0,
           latitudeDelta: state.region?.latitudeDelta || 0.0922,
           longitudeDelta: state.region?.longitudeDelta || 0.0421,
         }}
-        region={
-          state.region
-            ? {
-                latitude: state.region.latitude,
-                longitude: state.region.longitude,
-                latitudeDelta: state.region.latitudeDelta,
-                longitudeDelta: state.region.longitudeDelta,
-              }
-            : undefined
-        }
+        // region={mapRegion}
         showsMyLocationButton
         showsBuildings
         showsCompass

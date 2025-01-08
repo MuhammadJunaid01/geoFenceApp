@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -36,6 +36,11 @@ jobs:
 
       - name: Make Gradle Wrapper Executable
         run: chmod +x android/gradlew
+
+      - name: Clean Gradle Build
+        run: |
+          cd android
+          ./gradlew clean
 
       - name: Build application
         run: |
